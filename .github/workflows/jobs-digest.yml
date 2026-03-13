@@ -28,18 +28,16 @@ jobs:
 
       - name: Create .env file
         run: |
-          cat > .env <<EOF
-          JOB_KEYWORDS=${{ secrets.JOB_KEYWORDS }}
-          JOB_LOCATION=${{ secrets.JOB_LOCATION }}
-          MAX_RESULTS=${{ secrets.MAX_RESULTS }}
-          SMTP_HOST=${{ secrets.SMTP_HOST }}
-          SMTP_PORT=${{ secrets.SMTP_PORT }}
-          SMTP_USER=${{ secrets.SMTP_USER }}
-          SMTP_PASS=${{ secrets.SMTP_PASS }}
-          FROM_EMAIL=${{ secrets.FROM_EMAIL }}
-          TO_EMAIL=${{ secrets.TO_EMAIL }}
-          DB_PATH=seen_jobs.db
-          EOF
+          echo "JOB_KEYWORDS=${{ secrets.JOB_KEYWORDS }}" >> .env
+          echo "JOB_LOCATION=${{ secrets.JOB_LOCATION }}" >> .env
+          echo "MAX_RESULTS=${{ secrets.MAX_RESULTS }}" >> .env
+          echo "SMTP_HOST=${{ secrets.SMTP_HOST }}" >> .env
+          echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
+          echo "SMTP_USER=${{ secrets.SMTP_USER }}" >> .env
+          echo "SMTP_PASS=${{ secrets.SMTP_PASS }}" >> .env
+          echo "FROM_EMAIL=${{ secrets.FROM_EMAIL }}" >> .env
+          echo "TO_EMAIL=${{ secrets.TO_EMAIL }}" >> .env
+          echo "DB_PATH=seen_jobs.db" >> .env
 
       - name: Run script
         run: python google_jobs_digest.py
