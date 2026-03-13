@@ -173,8 +173,11 @@ def send_email_smtp(subject: str, html_body: str, plain_body: str) -> None:
     msg["Subject"] = subject
     msg["From"] = FROM_EMAIL
     msg["To"] = TO_EMAIL
+
     msg.set_content(plain_body)
-    msg.add_alternative(html_body, subtype="html")
+
+    if html_body.strip():
+        msg.add_alternative(html_body, subtype="html")
 
     with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as smtp:
         smtp.ehlo()
@@ -259,32 +262,57 @@ def main():
         reminders = get_unapplied_jobs(conn, limit=10)
 
         if not reminders:
-            subject = f"No new Google jobs — {datetime.now(timezone.utc).date()}"
-            plain_body = "No new job postings today (and no saved unapplied jobs to remind)."
-            html_body = "<p>No new job postings today (and no saved unapplied jobs to remind).</p>"
+            subject = f"No new Google jobs - {datetime.now(timezone.utc).date()}"
+            plain_body = (
+                "No new job postings today.\n"
+                "Also, there are no saved unapplied jobs to remind you about."
+            )
+            html_body = """
+            <html>
+                <body>
+                    <p>No new job postings today.</p>
+                    <p>Also, there are no saved unapplied jobs to remind you about.</p>
+                </body>
+            </html>
+            """
         else:
-            subject = f"No new jobs today — reminder list ({datetime.now(timezone.utc).date()})"
+            subject = f"No new jobs today - reminder list ({datetime.now(timezone.utc).date()})"
 
-            plain_lines = ["No new jobs today. Here are previous jobs you haven't marked as applied:\n"]
-            html_lines = ["<p>No new jobs today. Here are previous jobs you haven't marked as applied:</p><ul>"]
+            plain_lines = [
+                "No new jobs today.",
+                "Here are previous jobs you have not marked as applied:",
+                ""
+            ]
+            html_lines = [
+                "<html><body>",
+                "<p>No new jobs today.</p>",
+                "<p>Here are previous jobs you have not marked as applied:</p>",
+                "<ul>"
+            ]
 
             for j in reminders:
-                plain_lines.append(f"{j['title']} — {j['url']}")
+                plain_lines.append(f"- {j['title']} -> {j['url']}")
                 html_lines.append(f"<li><a href='{j['url']}'>{j['title']}</a></li>")
 
-            html_lines.append("</ul>")
+            html_lines.extend(["</ul>", "</body></html>"])
             plain_body = "\n".join(plain_lines)
             html_body = "\n".join(html_lines)
     else:
-        subject = f"{len(new_jobs)} new Google jobs — {datetime.utcnow().date()}"
-        lines = []
-        html_lines = ["<h2>New job postings</h2><ul>"]
+        subject = f"{len(new_jobs)} new Google jobs - {datetime.now(timezone.utc).date()}"
+        lines = ["New job postings:", ""]
+        html_lines = ["<html><body><h2>New job postings</h2><ul>"]
+
         for j in new_jobs:
-            lines.append(f"{j['title']} — {j['url']}")
+            lines.append(f"- {j['title']} -> {j['url']}")
             html_lines.append(f"<li><a href='{j['url']}'>{j['title']}</a></li>")
-        html_lines.append("</ul>")
+
+        html_lines.extend(["</ul>", "</body></html>"])
         plain_body = "\n".join(lines)
         html_body = "\n".join(html_lines)
+
+    print("SUBJECT:", subject)
+    print("PLAIN BODY:", plain_body)
+    print("HTML BODY:", html_body)
 
     if SENDGRID_API_KEY:
         send_email_sendgrid(subject, html_body, plain_body)
