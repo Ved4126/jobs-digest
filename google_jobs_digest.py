@@ -24,6 +24,7 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+import re
 
 load_dotenv()
 
@@ -136,16 +137,21 @@ def get_unapplied_jobs(conn: sqlite3.Connection, limit: int = 10) -> List[Dict]:
     rows = cur.fetchall()
     return [{"title": r[0] or "Google Job Posting", "url": r[1]} for r in rows]
 
+JOB_DETAIL_RE = re.compile(r"^/jobs/results/\d+")
+
 def parse_jobs_from_html(html: str, max_results: int) -> List[Dict]:
     soup = BeautifulSoup(html, "html.parser")
-
     jobs = []
-    for a in soup.select("a"):
-        href = a.get("href", "")
-        if "/jobs/results/" in href and href.strip():
-            title = a.get_text(" ", strip=True)
-            url = href if href.startswith("http") else "https://careers.google.com" + href
-            jobs.append({"title": title, "url": url})
+
+    for a in soup.select("a[href]"):
+        href = a.get("href", "").strip()
+
+        if not JOB_DETAIL_RE.match(href):
+            continue
+
+        title = a.get_text(" ", strip=True)
+        url = href if href.startswith("http") else "https://careers.google.com" + href
+        jobs.append({"title": title, "url": url})
 
         if len(jobs) >= max_results:
             break
