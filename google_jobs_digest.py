@@ -25,7 +25,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-load_dotenv(dotenv_path="/Users/veddabhi/Documents/jobs_digest/.env")
+load_dotenv()
 
 JOB_KEYWORDS = os.getenv("JOB_KEYWORDS", "software engineer,intern").split(",")
 JOB_LOCATION = os.getenv("JOB_LOCATION", "")
