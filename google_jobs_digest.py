@@ -234,6 +234,8 @@ def main():
 
     candidates = parse_jobs_from_html(html, MAX_RESULTS)
     print("Candidate job cards:", len(candidates))
+    for i, job in enumerate(candidates[:10], start=1):
+        print(f"{i}. {job['title']} -> {job['url']}")
 
     keywords_lower = [k.strip().lower() for k in JOB_KEYWORDS if k.strip()]
 
