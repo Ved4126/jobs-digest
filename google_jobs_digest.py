@@ -137,33 +137,45 @@ def get_unapplied_jobs(conn: sqlite3.Connection, limit: int = 10) -> List[Dict]:
     rows = cur.fetchall()
     return [{"title": r[0] or "Google Job Posting", "url": r[1]} for r in rows]
 
-JOB_DETAIL_RE = re.compile(r"^/jobs/results/\d+")
+JOB_DETAIL_RE = re.compile(r"/jobs/results/\d+")
 
-def parse_jobs_from_html(html: str, max_results: int) -> List[Dict]:
-    soup = BeautifulSoup(html, "html.parser")
-    jobs = []
+def extract_jobs_from_driver(driver: webdriver.Chrome, max_results: int) -> List[Dict]:
+        jobs = []
+        seen_urls = set()
 
-    for a in soup.select("a[href]"):
-        href = a.get("href", "").strip()
+        anchors = driver.find_elements(By.CSS_SELECTOR, "a[href]")
 
-        if not JOB_DETAIL_RE.match(href):
-            continue
+        for a in anchors:
+            href = (a.get_attribute("href") or "").strip()
+            title = (a.text or "").strip()
 
-        title = a.get_text(" ", strip=True)
-        url = href if href.startswith("http") else "https://careers.google.com" + href
-        jobs.append({"title": title, "url": url})
+            if not href:
+                continue
 
-        if len(jobs) >= max_results:
-            break
+            # keep only real job-detail links, not search/result pages
+            if not JOB_DETAIL_RE.search(href):
+                continue
 
-    deduped = []
-    seen_urls = set()
-    for j in jobs:
-        if j["url"] not in seen_urls:
-            seen_urls.add(j["url"])
-            deduped.append(j)
+            if "?q=" in href or "&page=" in href or "location=" in href:
+                continue
 
-    return deduped
+            if href in seen_urls:
+                continue
+
+            seen_urls.add(href)
+
+            if not title:
+                title = "Google Job Posting"
+
+            jobs.append({
+                "title": title,
+                "url": href
+            })
+
+            if len(jobs) >= max_results:
+                break
+
+        return jobs   
 
 
 def send_email_smtp(subject: str, html_body: str, plain_body: str) -> None:
@@ -237,24 +249,19 @@ def main():
             except Exception:
                 break
 
-        html = driver.page_source
-    finally:
+        candidates = extract_jobs_from_driver(driver, MAX_RESULTS)
+    finally: 
         driver.quit()
 
-    candidates = parse_jobs_from_html(html, MAX_RESULTS)
     print("Candidate job cards:", len(candidates))
     for i, job in enumerate(candidates[:10], start=1):
         print(f"{i}. {job['title']} -> {job['url']}")
 
-    keywords_lower = [k.strip().lower() for k in JOB_KEYWORDS if k.strip()]
-
     new_jobs = []
     for job in candidates:
-        text = job["title"].lower()
-        if any(k in text for k in keywords_lower):
-            if not is_seen(conn, job["url"]):
-                new_jobs.append(job)
-                mark_seen(conn, job["url"], job["title"])
+        if not is_seen(conn, job["url"]):
+            new_jobs.append(job)
+            mark_seen(conn, job["url"], job["title"])
 
     print("New jobs:", len(new_jobs))
 
