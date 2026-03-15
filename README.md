@@ -1,4 +1,6 @@
-# Google Jobs Email Digest
+# Google Careers Job Alert Automation
+
+Automated system that scrapes Google Careers daily and sends an email digest of new job postings using Python, Selenium, and GitHub Actions.
 
 ![Jobs Digest](https://github.com/Ved4126/jobs-digest/actions/workflows/jobs-digest.yml/badge.svg)
 
@@ -6,13 +8,20 @@
 ![Automation](https://img.shields.io/badge/Automation-GitHub%20Actions-green)
 ![License](https://img.shields.io/badge/License-MIT-orange)
 
-Automatically scrape Google Careers job listings and send a daily email digest with new opportunities.
+---
 
-This project uses Python, Selenium, and GitHub Actions to run automatically every day and notify you of new job postings.
+## Tech Stack
+
+- Python
+- Selenium
+- BeautifulSoup
+- SQLite
+- GitHub Actions
+- SMTP Email Automation
 
 ---
 
-# Overview
+## Overview
 
 This system performs three steps:
 
@@ -24,7 +33,7 @@ The workflow runs automatically every day at 9:00 AM using GitHub Actions.
 
 ---
 
-# Architecture
+## Architecture
 
 GitHub Actions (Daily 9 AM)
         │
@@ -51,7 +60,7 @@ seen_jobs.db updated
 
 ---
 
-# Example Email Output
+## Example Email Output
 
 Example email sent by the system:
 
@@ -69,7 +78,7 @@ Each job includes a clickable link to the official Google Careers page.
 
 ---
 
-# Features
+## Features
 
 - Scrapes Google Careers automatically
 - Supports multiple job keywords (AI, ML, SWE, etc.)
@@ -80,26 +89,29 @@ Each job includes a clickable link to the official Google Careers page.
 
 ---
 
-# Project Structure
+## Project Structure
 
-jobs_digest/
+jobs-digest/
 
-scrape_google_jobs.py  
-filter_jobs.py  
-send_jobs_email.py  
+scrape_google_jobs.py
+filter_jobs.py
+send_jobs_email.py
 
-jobs_raw.json  
-jobs_filtered.json  
-seen_jobs.db  
+.github/workflows/jobs-digest.yml
 
-.env  
-.gitignore  
+README.md
+.gitignore
 
-.github/workflows/jobs-digest.yml  
+Generated files (not committed to Git):
+
+jobs_raw.json
+jobs_filtered.json
+seen_jobs.db
+.env
 
 ---
 
-# Environment Configuration
+## Environment Configuration
 
 Create a `.env` file locally.
 
@@ -120,12 +132,12 @@ DB_PATH=seen_jobs.db
 
 ---
 
-# Installation
+## Installation
 
 Clone the repository
 
-git clone https://github.com/YOUR_USERNAME/google-jobs-digest.git  
-cd google-jobs-digest  
+git clone https://github.com/Ved4126/jobs-digest.git  
+cd jobs-digest  
 
 Create virtual environment
 
@@ -138,7 +150,7 @@ pip install selenium webdriver-manager beautifulsoup4 python-dotenv requests
 
 ---
 
-# Running Locally
+## Running Locally
 
 Run the pipeline manually:
 
@@ -148,7 +160,7 @@ python send_jobs_email.py
 
 ---
 
-# GitHub Automation
+## GitHub Automation
 
 The workflow runs automatically every day using:
 
@@ -162,7 +174,7 @@ This corresponds to 9:00 AM Pacific Time.
 
 ---
 
-# Future Improvements
+## Future Improvements
 
 Possible future upgrades:
 
@@ -174,7 +186,7 @@ Possible future upgrades:
 
 ---
 
-# Author
+## Author
 
 Ved Dabhi  
 Software Engineering Student
