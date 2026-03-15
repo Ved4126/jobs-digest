@@ -39,6 +39,14 @@ jobs:
           echo "TO_EMAIL=${{ secrets.TO_EMAIL }}" >> .env
           echo "DB_PATH=seen_jobs.db" >> .env
 
+      - name: Restore seen jobs database
+        uses: actions/cache/restore@v4
+        with:
+          path: seen_jobs.db
+          key: seen-jobs-db-${{ github.run_id }}
+          restore-keys: |
+            seen-jobs-db-
+
       - name: Run scraper
         run: python scrape_google_jobs.py
 
