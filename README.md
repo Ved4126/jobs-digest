@@ -1,5 +1,7 @@
 # Google Jobs Email Digest
 
+![Jobs Digest](https://github.com/Ved4126/jobs-digest/actions/workflows/jobs-digest.yml/badge.svg)
+
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Automation](https://img.shields.io/badge/Automation-GitHub%20Actions-green)
 ![License](https://img.shields.io/badge/License-MIT-orange)
