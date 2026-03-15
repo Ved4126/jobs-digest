@@ -55,3 +55,9 @@ jobs:
 
       - name: Send email
         run: python send_jobs_email.py
+
+      - name: Save seen jobs database
+        uses: actions/cache/save@v4
+        with:
+          path: seen_jobs.db
+          key: seen-jobs-db-${{ github.run_id }}
