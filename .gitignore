@@ -5,3 +5,4 @@ jobs_filtered.json
 seen_jobs.db
 job_digest.log
 __pycache__/
+.DB_Store
