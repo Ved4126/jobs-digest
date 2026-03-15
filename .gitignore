@@ -1,7 +1,7 @@
 venv/
 .env
+jobs_raw.json
+jobs_filtered.json
 seen_jobs.db
 job_digest.log
 __pycache__/
-*.pyc
-.DS_Store
