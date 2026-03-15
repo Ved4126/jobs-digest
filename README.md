@@ -12,12 +12,12 @@ Automated system that scrapes Google Careers daily and sends an email digest of 
 
 ## Tech Stack
 
-- Python
-- Selenium
-- BeautifulSoup
-- SQLite
-- GitHub Actions
-- SMTP Email Automation
+- 🐍 Python
+- 🌐 Selenium (Web Scraping)
+- 📦 JSON (Intermediate Data Storage)
+- 🗄 SQLite (Duplicate Job Tracking)
+- ⚙️ GitHub Actions (Automation & Scheduling)
+- 📧 SMTP (Email Notifications)
 
 ---
 
